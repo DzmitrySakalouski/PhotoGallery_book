@@ -19,15 +19,27 @@ public class ThumbnailDownloader<T> extends HandlerThread {
     private static final int MESSAGE_DOWNLOAD = 0;
     private Handler mRequestHandler;
     private ConcurrentMap<T, String> mReauestMap = new ConcurrentHashMap<>();
+    private Handler mResponseHandler;
 
-    public ThumbnailDownloader() {
+    private ThumbnailDownloaderListener<T> mThumbnailDownloaderListener;
+
+    public interface ThumbnailDownloaderListener<T> {
+        void onThumbnailDownloaded(T target, Bitmap thunbnail);
+    }
+
+    public ThumbnailDownloader(Handler responseHandler) {
         super(TAG);
+        mResponseHandler = responseHandler;
     }
 
     @Override
     public boolean quit() {
         mHasQuit = true;
         return super.quit();
+    }
+
+    public void setThumbnailDownloaderListener(ThumbnailDownloaderListener<T> listener) {
+        mThumbnailDownloaderListener = listener;
     }
 
     public void queueThumbnail(T target, String url) {
@@ -56,6 +68,11 @@ public class ThumbnailDownloader<T> extends HandlerThread {
         };
     }
 
+    public void clearQueue() {
+        mRequestHandler.removeMessages(MESSAGE_DOWNLOAD);
+        mReauestMap.clear();
+    }
+
     private void handleRequest(final T target) {
         try {
             final String url = mReauestMap.get(target);
@@ -67,6 +84,17 @@ public class ThumbnailDownloader<T> extends HandlerThread {
             byte[] bitmapBytes = new FlickrFetchr().getUrlBytes(url);
             final Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
             Log.i("TAG", "Bitmap created");
+
+            mResponseHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if(mReauestMap.get(target) != url || mHasQuit) {
+                        return;
+                    }
+                    mReauestMap.remove(target);
+                    mThumbnailDownloaderListener.onThumbnailDownloaded(target, bitmap);
+                }
+            });
         } catch (IOException e) {
 
         }
