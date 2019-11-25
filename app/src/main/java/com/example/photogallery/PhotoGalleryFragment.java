@@ -1,6 +1,8 @@
 package com.example.photogallery;
 
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -29,6 +31,7 @@ import android.widget.TextView;
 import com.example.photogallery.fetcher.FlickrFetchr;
 import com.example.photogallery.fetcher.ThumbnailDownloader;
 import com.example.photogallery.models.GalleryItem;
+import com.example.photogallery.service.PollService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -56,6 +59,7 @@ public class PhotoGalleryFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         updateItems();
+
         Handler responseHandler = new Handler();
 
         mThumbnailDownloader = new ThumbnailDownloader<>(responseHandler);
@@ -114,6 +118,10 @@ public class PhotoGalleryFragment extends Fragment {
                 QueryPreferensies.setStoredQuery(getActivity(), null);
                 updateItems();
                 return true;
+            case R.id.menu_item_toggle_polling:
+                boolean shouldStartAlarm = !PollService.isServiceAlarmOn(getActivity());
+                PollService.setServiceAlarm(getActivity(), shouldStartAlarm);
+                getActivity().invalidateOptionsMenu();
             default:
                 return super.onOptionsItemSelected(item);
         }
