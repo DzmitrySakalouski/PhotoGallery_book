@@ -84,7 +84,7 @@ public class PhotoGalleryFragment extends Fragment {
 
         setHasOptionsMenu(true);
 
-        Log.d("TAG", PollService.isServiceAlarmOn(getActivity()) + "");
+        Log.d("TAG", PollService.isServiceAlarmOn(getActivity()) + "is Alarm");
     }
 
     @Override
@@ -118,6 +118,13 @@ public class PhotoGalleryFragment extends Fragment {
                 searchView.setQuery(query, false);
             }
         });
+
+        MenuItem toggleMenu = menu.findItem(R.id.menu_item_toggle_polling);
+        if (PollService.isServiceAlarmOn(getActivity())) {
+            toggleMenu.setTitle(R.string.stop_polling);
+        } else {
+            toggleMenu.setTitle(R.string.start_polling);
+        }
     }
 
     @Override
@@ -128,8 +135,12 @@ public class PhotoGalleryFragment extends Fragment {
                 updateItems();
                 return true;
             case R.id.menu_item_toggle_polling:
-//                boolean shouldStartAlarm = !PollService.isServiceAlarmOn(getActivity());
-                PollService.setServiceAlarm(getActivity(), true);
+                boolean shouldStartAlarm = !PollService.isServiceAlarmOn(getActivity());
+
+                Log.d("TAG", "isServiceAlarmOn => " + shouldStartAlarm);
+
+                PollService.newIntent(getActivity());
+                PollService.setServiceAlarm(getActivity(), shouldStartAlarm);
                 getActivity().invalidateOptionsMenu();
 
             default:
