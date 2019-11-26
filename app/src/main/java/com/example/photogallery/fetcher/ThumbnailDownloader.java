@@ -43,8 +43,6 @@ public class ThumbnailDownloader<T> extends HandlerThread {
     }
 
     public void queueThumbnail(T target, String url) {
-        Log.i(TAG, "Got url => " + url);
-
         if (url == null) {
             mReauestMap.remove(target);
         } else {
@@ -60,8 +58,6 @@ public class ThumbnailDownloader<T> extends HandlerThread {
             public void handleMessage(@NonNull Message msg) {
                 if (msg.what == MESSAGE_DOWNLOAD) {
                     T target = (T) msg.obj;
-                    Log.i("TAG" , "GOT REQUEST URL " + mReauestMap.get(target));
-
                     handleRequest(target);
                 }
             }
