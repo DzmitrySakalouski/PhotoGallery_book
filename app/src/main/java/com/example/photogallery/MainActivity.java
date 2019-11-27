@@ -8,14 +8,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.example.photogallery.service.NotificationService;
-
 public class MainActivity extends SingleFragmentActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        NotificationService.initialize(this);
     }
 
     @Override

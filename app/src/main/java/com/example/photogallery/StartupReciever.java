@@ -10,6 +10,8 @@ import com.example.photogallery.service.PollService;
 public class StartupReciever extends BroadcastReceiver {
     private static final String TAG = "TAG";
 
+    // TODO : check on rel device
+
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "Recieved new broadcast => " + intent.getAction());
