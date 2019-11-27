@@ -47,7 +47,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PhotoGalleryFragment extends Fragment {
+public class PhotoGalleryFragment extends VisibilityFragment {
     private RecyclerView mPhotoRecyclerView;
     private static final String TAG = "TAG";
     private List<GalleryItem> mItems = new ArrayList<>();
